@@ -1,4 +1,4 @@
-import { Download, Search, Filter, Upload, Plus, Edit2, Trash2, Eye, X, ChevronDown, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Download, Search, Upload, Plus, Edit2, Trash2, Eye, X, ChevronDown, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const CustomDropdown = ({ value, onChange, options, placeholder, iconColorClass }: any) => {
   const [isOpen, setIsOpen] = useState(false);
