@@ -243,7 +243,7 @@ const Dashboard = () => {
             Track, filter, and convert your pipeline effectively.
           </p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
           {isAdmin && (
             <>
               <input 
@@ -425,8 +425,8 @@ const Dashboard = () => {
 
       {/* Pagination Controls */}
       {total > 0 && (
-        <div className="flex items-center justify-between mt-4 px-2">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between mt-4 px-2 gap-4">
+          <div className="text-sm text-gray-500 dark:text-gray-400 text-center sm:text-left">
             Showing <span className="font-semibold text-gray-900 dark:text-white">{(page - 1) * 10 + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{Math.min(page * 10, total)}</span> of <span className="font-semibold text-gray-900 dark:text-white">{total}</span> entries
           </div>
           <div className="flex space-x-2">
