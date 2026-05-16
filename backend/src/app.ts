@@ -27,6 +27,14 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'success', message: 'Server is healthy' });
 });
 
+// Root endpoint for Vercel
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ 
+    status: 'success', 
+    message: 'Welcome to GigFlow API! Everything is running perfectly.' 
+  });
+});
+
 // Handle undefined routes
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
