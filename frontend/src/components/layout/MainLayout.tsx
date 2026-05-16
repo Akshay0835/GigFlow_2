@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, Settings, Moon, Sun, MonitorSmartphone, LogOut, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 import useThemeStore from '../../store/useThemeStore';
@@ -14,6 +15,44 @@ const MainLayout = () => {
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleThemeToggle = (e: React.MouseEvent) => {
+    const x = e.clientX;
+    const y = e.clientY;
+    const endRadius = Math.hypot(
+      Math.max(x, innerWidth - x),
+      Math.max(y, innerHeight - y)
+    );
+
+    if (!document.startViewTransition) {
+      toggleTheme();
+      return;
+    }
+
+    const transition = document.startViewTransition(() => {
+      flushSync(() => {
+        toggleTheme();
+      });
+    });
+
+    transition.ready.then(() => {
+      const clipPath = [
+        `circle(0px at ${x}px ${y}px)`,
+        `circle(${endRadius}px at ${x}px ${y}px)`,
+      ];
+
+      document.documentElement.animate(
+        {
+          clipPath,
+        },
+        {
+          duration: 500,
+          easing: "ease-in-out",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+    });
   };
 
   const navItems = [
@@ -103,7 +142,7 @@ const MainLayout = () => {
           </div>
           <div className="flex items-center space-x-5">
             <button
-              onClick={toggleTheme}
+              onClick={handleThemeToggle}
               className="p-2.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               aria-label="Toggle Dark Mode"
             >
