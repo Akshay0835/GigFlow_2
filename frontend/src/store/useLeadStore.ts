@@ -17,6 +17,9 @@ interface LeadStore {
   token: string | null;
   fetchLeads: (params?: Record<string, unknown>) => Promise<void>;
   importLeads: (csvData: any[]) => Promise<void>;
+  createLead: (leadData: Partial<Lead>) => Promise<void>;
+  updateLead: (id: string, leadData: Partial<Lead>) => Promise<void>;
+  deleteLead: (id: string) => Promise<void>;
 }
 
 const useLeadStore = create<LeadStore>((set, get) => ({
@@ -35,7 +38,7 @@ const useLeadStore = create<LeadStore>((set, get) => ({
         return;
       }
 
-      const { data } = await axios.get('/api/v1/leads', { 
+      const { data } = await axios.get('/leads', { 
         params,
         headers: {
           Authorization: `Bearer ${currentToken}`
@@ -61,15 +64,61 @@ const useLeadStore = create<LeadStore>((set, get) => ({
     set({ loading: true });
     try {
       const currentToken = localStorage.getItem('token');
-      await axios.post('/api/v1/leads/bulk', { leads: csvData }, {
+      await axios.post('/leads/bulk', { leads: csvData }, {
         headers: {
           Authorization: `Bearer ${currentToken}`
         }
       });
       await get().fetchLeads();
-    } catch (error) {
-      console.error('Import Leads Error:', error);
+    } catch (error: any) {
+      console.error('Import Leads Error:', error.response?.data || error);
       set({ loading: false });
+      throw error;
+    }
+  },
+
+  createLead: async (leadData) => {
+    set({ loading: true });
+    try {
+      const currentToken = localStorage.getItem('token');
+      await axios.post('/leads', leadData, {
+        headers: { Authorization: `Bearer ${currentToken}` }
+      });
+      await get().fetchLeads();
+    } catch (error: any) {
+      console.error('Create Lead Error:', error.response?.data || error);
+      set({ loading: false });
+      throw error;
+    }
+  },
+
+  updateLead: async (id, leadData) => {
+    set({ loading: true });
+    try {
+      const currentToken = localStorage.getItem('token');
+      await axios.patch(`/leads/${id}`, leadData, {
+        headers: { Authorization: `Bearer ${currentToken}` }
+      });
+      await get().fetchLeads();
+    } catch (error: any) {
+      console.error('Update Lead Error:', error.response?.data || error);
+      set({ loading: false });
+      throw error;
+    }
+  },
+
+  deleteLead: async (id) => {
+    set({ loading: true });
+    try {
+      const currentToken = localStorage.getItem('token');
+      await axios.delete(`/leads/${id}`, {
+        headers: { Authorization: `Bearer ${currentToken}` }
+      });
+      await get().fetchLeads();
+    } catch (error: any) {
+      console.error('Delete Lead Error:', error.response?.data || error);
+      set({ loading: false });
+      throw error;
     }
   },
 }));

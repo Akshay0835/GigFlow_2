@@ -23,7 +23,10 @@ export const bulkCreateLeads = async (req: Request, res: Response, next: NextFun
     if (!leads || !Array.isArray(leads)) {
       return next(new AppError('Please provide an array of leads', 400));
     }
-    const newLeads = await Lead.insertMany(leads);
+    
+    // Use ordered: false so that if one lead fails (e.g. duplicate email), it continues inserting the others
+    const newLeads = await Lead.insertMany(leads, { ordered: false });
+    
     res.status(201).json({
       status: 'success',
       results: newLeads.length,
@@ -31,7 +34,19 @@ export const bulkCreateLeads = async (req: Request, res: Response, next: NextFun
         leads: newLeads,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
+    // If ordered: false, Mongo throws a MongoBulkWriteError if some inserts failed.
+    // The successful inserts are still saved.
+    if (error.name === 'MongoBulkWriteError' && error.code === 11000) {
+       return res.status(201).json({
+          status: 'success',
+          message: 'Some leads were skipped because they already exist.',
+          results: error.insertedCount,
+          data: {
+             leads: Object.values(error.insertedDocs)
+          }
+       });
+    }
     next(error);
   }
 };

@@ -78,6 +78,17 @@ const Login = () => {
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
+
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-2 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30 rounded-xl">
+            <span className="text-sm text-indigo-800 dark:text-indigo-300 font-medium">Want to test Admin features?</span>
+            <button
+              type="button"
+              onClick={() => setFormData({ email: 'admin@gigflow.com', password: 'password123' })}
+              className="text-sm font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 underline underline-offset-2 transition-colors"
+            >
+              Fill Admin Demo Info
+            </button>
+          </div>
         </form>
       </div>
     </div>

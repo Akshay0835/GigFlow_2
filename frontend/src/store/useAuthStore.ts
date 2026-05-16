@@ -34,7 +34,7 @@ const useAuthStore = create<AuthStore>((set) => ({
   login: async (credentials) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await axios.post('/api/v1/auth/login', credentials);
+      const { data } = await axios.post('/auth/login', credentials);
       const { token, data: resData } = data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(resData.user));
@@ -56,7 +56,7 @@ const useAuthStore = create<AuthStore>((set) => ({
   signup: async (userData) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await axios.post('/api/v1/auth/register', userData);
+      const { data } = await axios.post('/auth/register', userData);
       // Wait, register now returns `status: 'pending_verification'` and does NOT log user in!
       set({ loading: false });
       return data;
@@ -72,7 +72,7 @@ const useAuthStore = create<AuthStore>((set) => ({
   verifyEmail: async (email: string, code: string) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await axios.post('/api/v1/auth/verify', { email, code });
+      const { data } = await axios.post('/auth/verify', { email, code });
       const { token, data: resData } = data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(resData.user));
@@ -95,7 +95,7 @@ const useAuthStore = create<AuthStore>((set) => ({
     set({ loading: true, error: null });
     try {
       const currentToken = localStorage.getItem('token');
-      await axios.post('/api/v1/auth/invite', { email, role }, {
+      await axios.post('/auth/invite', { email, role }, {
         headers: {
           Authorization: `Bearer ${currentToken}`
         }
@@ -114,7 +114,7 @@ const useAuthStore = create<AuthStore>((set) => ({
     set({ loading: true, error: null });
     try {
       const currentToken = localStorage.getItem('token');
-      const res = await axios.put('/api/v1/auth/me', data, {
+      const res = await axios.put('/auth/me', data, {
         headers: { Authorization: `Bearer ${currentToken}` }
       });
       const updatedUser = res.data.data.user;
@@ -133,7 +133,7 @@ const useAuthStore = create<AuthStore>((set) => ({
     set({ loading: true, error: null });
     try {
       const currentToken = localStorage.getItem('token');
-      const res = await axios.put('/api/v1/auth/updatePassword', data, {
+      const res = await axios.put('/auth/updatePassword', data, {
         headers: { Authorization: `Bearer ${currentToken}` }
       });
       const token = res.data.token;

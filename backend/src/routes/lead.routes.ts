@@ -16,18 +16,18 @@ const router = express.Router();
 // Protect all routes
 router.use(protect);
 
-router.get('/export', exportLeadsCsv);
+router.get('/export', restrictTo('Admin'), exportLeadsCsv);
 
 router.post('/bulk', restrictTo('Admin'), bulkCreateLeads);
 
 router
   .route('/')
   .get(getLeads)
-  .post(restrictTo('Admin'), validate(createLeadSchema), createLead);
+  .post(restrictTo('Admin', 'Sales'), validate(createLeadSchema), createLead);
 
 router
   .route('/:id')
-  .patch(restrictTo('Admin'), validate(updateLeadSchema), updateLead)
+  .patch(restrictTo('Admin', 'Sales'), validate(updateLeadSchema), updateLead)
   .delete(restrictTo('Admin'), deleteLead);
 
 export default router;

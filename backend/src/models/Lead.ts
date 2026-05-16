@@ -33,6 +33,7 @@ const LeadSchema: Schema = new Schema(
     email: {
       type: String,
       required: [true, 'Please provide a lead email'],
+      unique: true,
       trim: true,
       lowercase: true,
       match: [
