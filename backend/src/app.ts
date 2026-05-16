@@ -4,9 +4,30 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { globalErrorHandler } from './middlewares/errorHandler';
 import { AppError } from './utils/AppError';
+import mongoose from 'mongoose';
+
+// Ensure MongoDB connects in serverless environments
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) return;
+  try {
+    const mongoUri = process.env.MONGO_URI;
+    if (mongoUri) {
+      await mongoose.connect(mongoUri);
+      console.log('Serverless MongoDB connected');
+    }
+  } catch (err) {
+    console.error('Serverless MongoDB connection error', err);
+  }
+};
 
 // Initialize express app
 const app: Application = express();
+
+// Connect to DB for every request if disconnected (serverless pattern)
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
 // Global Middlewares
 app.use(helmet());
